@@ -1,48 +1,70 @@
 <html>
 	<head>
-		<link rel="stylesheet" href = "css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
 	    <script src="js/angular.min.js"></script>
+	    <script src="js/angular-messages.min.js"></script>
 	    <script src="js/app.js"></script>
 	    <script src="js/employeeManagementController.js"></script>
 	</head>
 	<body class="container">
 		<div ng-app="myApp"  ng-controller="employeeManagementController">
 			<h2  class="page-header">Employee Management</h2>
-			<form class="form" >
+			<form class="form" name="myform">
 				<div clas="row">
 					<div class="col-md-1"></div>
 					<div class="col-md-10">
 						<div class="row form-group">
 							<label class="col-sm-2 col-md-2">First Name</label>
 							<div class="col-sm-4 col-md-4">
-								<input type="text" class="form-control" ng-model="empObj.firstName"/>
+								<input type="text" class="form-control" name="firstName"  ng-model="empObj.firstName" pattern="[a-zA-Z ]*$"  required />
+							</div>
+							<div class="col-sm-6 col-md-6 text-danger" ng-messages="myform.firstName.$error" ng-if="myform.firstName.$invalid && myform.firstName.$touched " >
+							    <p ng-message="required" > firstname required.</p>
+							    <p ng-message="pattern" > firstname invalid.</p>
 							</div>
 						</div>
+
 						<div class="row form-group">
 							<label class="col-sm-2 col-sm-2">Last Name</label>
 							<div class="col-sm-4 col-sm-4">
-								<input type="text" class="form-control" ng-model="empObj.lastName" />
+								<input type="text" class="form-control" name="lastName" ng-model="empObj.lastName" pattern="[a-zA-Z ]*$" required/>
+							</div>
+							<div class="col-sm-6 col-md-6 text-danger" ng-messages="myform.lastName.$error" ng-if="myform.lastName.$invalid && myform.lastName.$touched " >
+							    <p ng-message="required" > lastname required.</p>
+							    <p ng-message="pattern" > lastname invalid.</p>
 							</div>
 						</div>
+
 						<div class="row form-group">
 							<label class="col-sm-2 col-sm-2">Mobile</label>
 							<div class="col-sm-4 col-sm-4">
-								<input type="text" class="form-control" ng-model="empObj.mobileNo" />
+								<input type="number" class="form-control" min=1000000000 ng-maxlength="13" ng-minlength="10" name="mobileNo" ng-model="empObj.mobileNo" required />
+							</div>
+							<div class="col-sm-6 col-md-6 text-danger" ng-messages="myform.mobileNo.$error" ng-if="myform.mobileNo.$invalid && myform.mobileNo.$touched " >
+							    <p ng-message="required" > Mobile No. required</p>
+							    <p ng-message="minlength , maxlength" > mobile number length can be between 10 to 13.</p>
 							</div>
 						</div>
+
 						<div class="row form-group">
 							<label class="col-sm-2 col-sm-2">Gender</label>
 							<div class="col-sm-4 col-sm-4">
-								<select ng-model="empObj.gender" class="form-control" > 
-										<option value="male" >Male</option>
-										<option vlaue="female" >Female</option>
+								<select ng-model="empObj.gender" class="form-control" name="gender" required> 
+									<option value="male" >Male</option>
+									<option value="female" >Female</option>
 								</select>
+							</div>
+							<div class="col-sm-6 col-md-6 text-danger" ng-messages="myform.gender.$error" ng-if="myform.gender.$invalid && myform.gender.$touched " >
+							    <p ng-message="required" > select valid gender.</p>
 							</div>
 						</div>
 						<div class="row form-group">
 							<label class="col-sm-2 col-sm-2">DOB</label>
 							<div class="col-sm-4 col-sm-4">
-								<input type="date" ng-model="empObj.dob"  data-fv-date="true" max="{{maxDate | date:'yyyy-MM-dd'}}" class="form-control" />
+								<input type="date" ng-model="empObj.dob"  name="dob" max="{{maxDate | date:'yyyy-MM-dd'}}" class="form-control" required/>
+							</div>
+							<div class="col-sm-6 col-md-6 text-danger" ng-messages="myform.dob.$error" ng-if="myform.dob.$invalid && myform.dob.$touched " >
+							    <p ng-message="required" > You need to enter valid birth date.</p>
 							</div>
 						</div>
 						<div class="row form-group">
@@ -55,7 +77,6 @@
 							</div>
 							<div class="col-sm-1"></div>
 						</div>
-
 						<div class="row">
 							<div class="col-md-12 col-sm-6">
 								<div class="form-group">
@@ -91,6 +112,8 @@
 					<div class="col-md-1"></div>
 				</div>
 			</form>
+		{{output}}
+			
 		</div>
 	</body>
 </html>
