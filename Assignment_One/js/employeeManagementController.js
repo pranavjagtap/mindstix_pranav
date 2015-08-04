@@ -1,10 +1,24 @@
-app.controller('employeeManagementController', function($scope, $timeout) {
+app.controller('employeeManagementController', function($scope, $timeout, $http) {
 	$scope.btnupdate = false;
 	$scope.btnsave = true;
 	$scope.empList = [];	
 	$scope.id = 1;
 	$scope.maxDate = new Date();
-	$scope.empObj = "";	
+	$scope.empObj = {};
+
+	$scope.getDataFromJSON = function(){
+		$timeout(function(){$scope.getDataFromJSON()}, 15000);
+		$http.get("js/employee.json").success(function(response){
+			if (response.status == "success") {
+				$scope.empList = response.object.employees;
+			} else {
+				$scope.crudAlertMessage = response.message;
+				$timeout(function(){$scope.crudAlertMessage = ""},4000);
+			};
+		});
+	};
+	
+
 	$scope.saveDetails = function(empObj){
 		if ($scope.btnupdate == true) {
 			angular.forEach($scope.empList, function(emp){
@@ -14,7 +28,7 @@ app.controller('employeeManagementController', function($scope, $timeout) {
 						emp.lastName = empObj.lastName;
 						emp.mobileNo = empObj.mobileNo;
 						emp.gender = empObj.gender;
-						emp.dob = empObj.dob;   
+						emp.dob = new Date(empObj.dob);   
 		              	$scope.clearForm();
 						$scope.isTouched(false);
 						$scope.crudAlertMessage ="Record updated successfully";
@@ -31,10 +45,12 @@ app.controller('employeeManagementController', function($scope, $timeout) {
 					};
 				});
 		} else {
+			if ($scope.empList.length > 0) {
+				$scope.id = parseInt($scope.empList[$scope.empList.length -1].id) + 1;
+			};
 			if (empObj.firstName && empObj.lastName && empObj.mobileNo && empObj.gender && empObj.dob) {
 				empObj['id'] = $scope.id;
 				$scope.empList.push(empObj);	
-				$scope.id = $scope.id + 1;
 				$scope.clearForm();
 				$scope.isTouched(false);
 				$scope.crudAlertMessage ="Record saved successfully";
@@ -50,7 +66,12 @@ app.controller('employeeManagementController', function($scope, $timeout) {
 	};
 
 	$scope.editDetails = function(emp){
-		$scope.empObj = angular.copy(emp);
+		$scope.empObj.id = emp.id;
+		$scope.empObj.firstName = emp.firstName;
+		$scope.empObj.lastName = emp.lastName;
+		$scope.empObj.mobileNo = emp.mobileNo;
+		$scope.empObj.gender = emp.gender;
+		$scope.empObj.dob = new Date(emp.dob);
 		$scope.btnupdate = true;
 		$scope.btnsave = false;
 	};
@@ -76,6 +97,9 @@ app.controller('employeeManagementController', function($scope, $timeout) {
 	};
 
 	$scope.clearForm = function(){
-		$scope.empObj = "";
+		$scope.isTouched(false);
+		$scope.empObj = {};
+		$scope.btnupdate = false;
+		$scope.btnsave = true;
 	};
 });

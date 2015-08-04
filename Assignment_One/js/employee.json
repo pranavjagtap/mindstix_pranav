@@ -1,0 +1,57 @@
+{
+  "status": "success",
+  "message": "Error in fetching employee list.",
+  "object": {
+    "employees":
+      [
+        {
+          "id":"1",
+          "firstName" : "Amit",
+          "lastName" : "Kumar",
+          "mobileNo" : 9879879879,
+          "gender" : "male",
+          "dob" : "2014-11-29"
+        },
+        {
+          "id":"2",
+          "firstName" : "Sumit",
+          "lastName" : "Singh",
+          "mobileNo" : 9879879879,
+          "gender" : "female",
+          "dob" : "2014-11-29"
+        },
+        {
+          "id":"3",
+          "firstName" : "nishant",
+          "lastName" : "kumar",
+          "mobileNo" : 9879879879,
+          "gender" : "male",
+          "dob" : "2014-11-29"
+        },
+        {
+          "id":"4",
+          "firstName" : "sumita",
+          "lastName" : "kumari",
+          "mobileNo" : 9879879879,
+          "gender" : "female",
+          "dob" : "2014-11-29"
+        },
+        {
+          "id":"5",
+          "firstName" : "nitu",
+          "lastName" : "Singh",
+          "mobileNo" : 9879879879,
+          "gender" : "female",
+          "dob" : "2014-11-29"
+        },
+        {
+          "id":"6",
+          "firstName" : "arjit",
+          "lastName" : "Singh",
+          "mobileNo" : 9879879879,
+          "gender" : "male",
+          "dob" : "2014-11-29"
+        }
+      ]
+    }
+}
