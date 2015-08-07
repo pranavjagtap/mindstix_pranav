@@ -17,7 +17,6 @@ app.controller('employeeManagementController', function($scope, $timeout, $http)
 			};
 		});
 	};
-	
 
 	$scope.saveDetails = function(empObj){
 		if ($scope.btnupdate == true) {
@@ -28,7 +27,7 @@ app.controller('employeeManagementController', function($scope, $timeout, $http)
 						emp.lastName = empObj.lastName;
 						emp.mobileNo = empObj.mobileNo;
 						emp.gender = empObj.gender;
-						emp.dob = new Date(empObj.dob);   
+						emp.dob = new Date(empObj.dob).toISOString().substring(0, 10);   
 		              	$scope.clearForm();
 						$scope.isTouched(false);
 						$scope.crudAlertMessage ="Record updated successfully";
@@ -50,6 +49,7 @@ app.controller('employeeManagementController', function($scope, $timeout, $http)
 			};
 			if (empObj.firstName && empObj.lastName && empObj.mobileNo && empObj.gender && empObj.dob) {
 				empObj['id'] = $scope.id;
+				empObj.dob = new Date(empObj.dob).toISOString().substring(0, 10);   
 				$scope.empList.push(empObj);	
 				$scope.clearForm();
 				$scope.isTouched(false);
