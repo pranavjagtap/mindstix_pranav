@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/angular-chart.css">
+		<link rel="stylesheet" href="css/custom.css">
+	</head>
+	<body class="container" ng-app="myApp" ng-controller="myChartController">
+		<div class="page-header">
+		  <h1>Chart Examples <small>using angular-chart.js</small></h1>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-default">
+				  <div class="panel-heading">Line Chart</div>
+				  <div class="panel-body">
+				    <canvas id="line" class="chart chart-line" data="mData" labels="mLabels" legend="true" series="mSeries" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+				  <div class="panel-heading">Bar Chart</div>
+				  <div class="panel-body">
+				    <canvas id="bar" class="chart chart-bar" data="mData" labels="mLabels" legend="true" series="mSeries" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-success">
+				  <div class="panel-heading">Radar Chart</div>
+				  <div class="panel-body">
+				    <canvas id="line" class="chart chart-radar" height="150%" data="mData" labels="mLabels" legend="true" series="mSeries" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-info">
+				  <div class="panel-heading">Pie Chart</div>
+				  <div class="panel-body">
+				    <canvas id="pie" class="chart chart-pie" height="135%" data="sData" labels="sLabels" legend="true" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-danger">
+				  <div class="panel-heading">Doughnut Chart</div>
+				  <div class="panel-body">
+					 <canvas id="pie" class="chart chart-doughnut" data="sData" labels="sLabels" legend="true" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-warning">
+				  <div class="panel-heading">Polar-Area Chart</div>
+				  <div class="panel-body">
+					 <canvas id="pie" class="chart chart-polar-area" data="sData" labels="sLabels" legend="true" click="onClick" ></canvas>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<script src="js/angular.min.js"></script>
+	    <script src="js/Chart.min.js"></script>
+	    <script src="js/angular-chart.min.js"></script>
+	    <script src="js/app.js"></script>
+	    <script src="js/myChartController.js"></script>
+	</body>
+</html>
