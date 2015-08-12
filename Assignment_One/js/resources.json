@@ -1,0 +1,9 @@
+{
+	"config":
+      [
+        {
+          "funcName": "getResult",
+          "dataUrl" : "js/employee.json"
+        }
+       ]
+}

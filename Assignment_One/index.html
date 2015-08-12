@@ -11,7 +11,6 @@
 		<div ng-app="myApp"  ng-controller="employeeManagementController" ng-init="getDataFromJSON()">
 			<div clas="row">
 				<h2 class="page-header">Employee Management</h2>
-			
 				<form class="form" name="myform">
 					<div class="col-md-1"></div>
 					<div class="col-md-10">
@@ -90,7 +89,7 @@
 					</div>
 				</form>
 
-				<my-table obj-name="empList" edit-method="editDetails" delete-method="deleteDetails"></my-table>
+				<my-table obj-name="empList" edit-method="editDetails" delete-method="deleteDetails" edit-button="true" delete-button="true"></my-table>
 
 				<div class="row" ng-show="empList.length == 0">
 					<div class="col-md-12 col-sm-6">

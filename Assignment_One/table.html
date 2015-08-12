@@ -1,16 +1,19 @@
 <div class="row">
 	<div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
 		<div class="form-group">
+			<!-- Iterate through the array of objects and display 'key' part of first object as column name in the table -->
 			<table class="table table-striped table-bordered">
-				<tr ng-repeat="emp in myList | limitTo:1">
-					<th ng-repeat="(key , val) in emp"> {{key}}</th>
-					<th>control panel</th>
+				<tr ng-repeat="obj in myList | limitTo:1">
+					<th class="text-center" ng-repeat="(key , val) in obj"> {{key}}</th>
+					<th class="text-center" ng-show="(editButton == true) || (deleteButton == true)">control panel</th>
 				</tr>
-				<tr ng-repeat="emp in myList">
-					<td ng-repeat="(key , val ) in emp">{{val}} </td>
-					<td>
-						<a href="#" ng-click="editMethod(emp)"> <span class="glyphicon glyphicon-pencil"></span> </a>
-						<a href="#" ng-click="deleteMethod(emp.id)"><span class="glyphicon glyphicon-trash"></span></a>
+				<!-- Iterate through the array of objects and display 'value' part of all objects as rows in the table -->
+				<tr ng-repeat="obj in myList">
+					<td class="text-center" ng-repeat="(key , val ) in obj">{{val}} </td>
+					<td class="text-center" ng-show="(editButton == true) || (deleteButton == true)">
+						<!-- Each row will consist of edit and delete button to manipulate the table rows -->
+						<a href="#" ng-click="editMethod(obj)" ng-show="editButton == true"> <span class="glyphicon glyphicon-pencil"></span> </a>
+						<a href="#" ng-click="deleteMethod(obj.id)" ng-show="deleteButton == true"><span class="glyphicon glyphicon-trash"></span></a>
 					</td>
 				</tr>
 			</table>
