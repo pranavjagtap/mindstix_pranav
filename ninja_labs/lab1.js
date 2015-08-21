@@ -28,31 +28,53 @@ var js2xmlparser = require('js2xmlparser');
  */
 function generateTabularDataFromObject(sortedObject) {
     'use strict';
-    var keys = Object.keys(sortedObject), tabularData = '', temp = '', i = 0, cnt = 0, innerObj = {}, prop = '';
-    for (i = 0, cnt = 0; i < sortedObject[keys].length; i = i + 1) {
-        innerObj = sortedObject[keys][i];
-        if (cnt === 0) {
+    var keys = '', tabularData = '', temp = '', i = 0, cnt = 0, innerObj = {}, prop = '';
+    try {
+        keys = Object.keys(sortedObject);
+        for (i = 0, cnt = 0; i < sortedObject[keys].length; i = i + 1) {
+            innerObj = sortedObject[keys][i];
+            if (cnt === 0) {
+                for (prop in innerObj) {
+                    if (innerObj.hasOwnProperty(prop)) {
+                        if (prop === 'id') {
+                            temp += 'Id' + '   |   ';
+                        } else if (prop === 'fName') {
+                            temp += 'First Name' + '   |   ';
+                        } else if (prop === 'lName') {
+                            temp += 'Last Name' + '   |   ';
+                        } else if (prop === 'score') {
+                            temp += 'Score' + '   |   ';
+                        } else {
+                            throw "[Error: '" + prop + "' is not an unexpected key name in json object.]";
+                        }
+                    }
+                }
+                tabularData += temp.slice(0, temp.lastIndexOf('|')) + '\n';
+                temp = '';
+                cnt = cnt + 1;
+            }
             for (prop in innerObj) {
                 if (innerObj.hasOwnProperty(prop)) {
-                    if (prop === 'id') { prop = 'Id'; }
-                    if (prop === 'fName') { prop = 'First Name'; }
-                    if (prop === 'lName') { prop = 'Last Name'; }
-                    if (prop === 'score') { prop = 'Score'; }
-                    temp += prop + '   |   ';
+                    if (Object.keys(innerObj).length === 4) {
+                        if (prop === 'id' || prop === 'fName' || prop === 'lName' || prop === 'score') {
+                            temp += innerObj[prop] + '   |   ';
+                        } else {
+                            throw "[Error: you have miss-spelled a key as '" + prop + "' in JSON Object. Please check the source(input) json file]";
+                        }
+                    } else {
+                        throw "[Error: few keys are missing in JSON Object. Please check the source(input) json file]";
+                    }
+                } else {
+                    throw "[Error: key is missing in JSON Object. Please check the source(input) json file]";
                 }
             }
             tabularData += temp.slice(0, temp.lastIndexOf('|')) + '\n';
             temp = '';
-            cnt = cnt + 1;
         }
-        for (prop in innerObj) {
-            if (innerObj.hasOwnProperty(prop)) {
-                temp += innerObj[prop] + '   |   ';
-            }
-        }
-        tabularData += temp.slice(0, temp.lastIndexOf('|')) + '\n';
-        temp = '';
+    } catch (e) {
+        throw e;
     }
+
     return tabularData;
 }
 
@@ -61,13 +83,17 @@ function generateTabularDataFromObject(sortedObject) {
  */
 function writeToFile(fileName, text) {
     'use strict';
-    fs.writeFile(fileName, text, function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('The file was saved successfully with name ' + fileName + '!');
-        }
-    });
+    try {
+        fs.writeFile(fileName, text.toString(), function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('The file was saved successfully with name ' + fileName + '!');
+            }
+        });
+    } catch (e) {
+        throw e;
+    }
 }
 
 /**
@@ -78,27 +104,31 @@ function orderArray(jsonArray, colName, order) {
     'use strict';
     var testData = [], sortedArray = [], i = 0, j = 0;
 
-    //create array of column data to be sorted.
-    for (i = 0; i < jsonArray.length; i = i + 1) {
-        testData.push(jsonArray[i][colName]);
-    }
-    //Sort the testData column.
-    testData = testData.sort(function (a, b) {
-        if (order === 'asc') {
-            return b - a;
+    try {
+        //create array of column data to be sorted.
+        for (i = 0; i < jsonArray.length; i = i + 1) {
+            testData.push(jsonArray[i][colName]);
         }
-        if (order === 'desc') {
+        //Sort the testData column.
+        testData = testData.sort(function (a, b) {
+            if (order === 'asc') {
+                return b - a;
+            }
+            if (order === 'desc') {
+                return a - b;
+            }
             return a - b;
-        }
-        return a - b;
-    });
-    //generate sorted array of objects as per the testData order
-    for (i = 0; i < jsonArray.length; i = i + 1) {
-        for (j = 0; j < jsonArray.length; j = j + 1) {
-            if (jsonArray[j][colName] === testData[i]) {
-                sortedArray.push(jsonArray[j]);
+        });
+        //generate sorted array of objects as per the testData order
+        for (i = 0; i < jsonArray.length; i = i + 1) {
+            for (j = 0; j < jsonArray.length; j = j + 1) {
+                if (jsonArray[j][colName] === testData[i]) {
+                    sortedArray.push(jsonArray[j]);
+                }
             }
         }
+    } catch (e) {
+        throw e;
     }
     return sortedArray;
 }
@@ -108,11 +138,15 @@ function orderArray(jsonArray, colName, order) {
  */
 function convertObjectToArray(jsonObject) {
     'use strict';
-    var jsonData, keys, jsonArray;
-    jsonData = JSON.parse(jsonObject);
-    keys = Object.keys(jsonData);
-    jsonArray = jsonData[keys[0]];
-    return jsonArray;
+    try {
+        var jsonData, keys, jsonArray;
+        jsonData = JSON.parse(jsonObject);
+        keys = Object.keys(jsonData);
+        jsonArray = jsonData[keys[0]];
+        return jsonArray;
+    } catch (e) {
+        throw e;
+    }
 }
 
 /**
@@ -132,11 +166,15 @@ function convertArrayToObject(array, keyName) {
  */
 function sortObject(colName, jsonObject, order) {
     'use strict';
-    var jsonArray, sortedArray, sortedObject;
-    jsonArray = convertObjectToArray(jsonObject);
-    sortedArray = orderArray(jsonArray, colName, order);
-    sortedObject = convertArrayToObject(sortedArray, 'students');
-    return sortedObject;
+    try {
+        var jsonArray, sortedArray, sortedObject;
+        jsonArray = convertObjectToArray(jsonObject);
+        sortedArray = orderArray(jsonArray, colName, order);
+        sortedObject = convertArrayToObject(sortedArray, 'students');
+        return sortedObject;
+    } catch (e) {
+        throw e;
+    }
 }
 
 /**
@@ -146,32 +184,35 @@ function sortObject(colName, jsonObject, order) {
 function generateObjForXMLGeneration(sortedObject) {
     'use strict';
     var newObj, keys, i = 0, prop, propKey, propValue;
-    newObj = sortedObject;
-    keys = Object.keys(newObj);
+    try {
+        newObj = sortedObject;
+        keys = Object.keys(newObj);
 
-    for (i = 0; i < newObj[keys].length; i = i + 1) {
-        for (prop in newObj[keys][i]) {
-            if (newObj[keys][i].hasOwnProperty(prop)) {
-                if (prop === 'id') {
-                    propKey = { 'id': newObj[keys][i][prop]};
-                    delete newObj[keys][i][prop];
-                    newObj[keys][i]['@'] = propKey;
-                }
-                if (prop === 'fName') {
-                    newObj[keys][i].name = newObj[keys][i][prop] + ' ';
-                    delete newObj[keys][i][prop];
-                }
-                if (prop === 'lName') {
-                    newObj[keys][i].name += newObj[keys][i][prop];
-                    delete newObj[keys][i][prop];
-                }
-                if (prop === 'score') {
-                    propValue = newObj[keys][i][prop];
-                    delete newObj[keys][i][prop];
-                    newObj[keys][i].score = propValue;
+        for (i = 0; i < newObj[keys].length; i = i + 1) {
+            for (prop in newObj[keys][i]) {
+                if (newObj[keys][i].hasOwnProperty(prop)) {
+                    if (prop === 'id') {
+                        propKey = { 'id': newObj[keys][i][prop]};
+                        delete newObj[keys][i][prop];
+                        newObj[keys][i]['@'] = propKey;
+                    } else if (prop === 'fName') {
+                        newObj[keys][i].name = newObj[keys][i][prop] + ' ';
+                        delete newObj[keys][i][prop];
+                    } else if (prop === 'lName') {
+                        newObj[keys][i].name += newObj[keys][i][prop];
+                        delete newObj[keys][i][prop];
+                    } else if (prop === 'score') {
+                        propValue = newObj[keys][i][prop];
+                        delete newObj[keys][i][prop];
+                        newObj[keys][i].score = propValue;
+                    } else {
+                        throw "[Error: " + prop + " is an unexpected key name in json object.]";
+                    }
                 }
             }
         }
+    } catch (e) {
+        throw e;
     }
     return newObj[keys];
 }
@@ -182,12 +223,16 @@ function generateObjForXMLGeneration(sortedObject) {
  */
 function generateXML(fileName, newObjForXML) {
     'use strict';
-    var options = {
-        arrayMap: {
-            'students': 'student'
-        }
-    };
-    writeToFile(fileName, js2xmlparser('students', newObjForXML, options));
+    try {
+        var options = {
+            arrayMap: {
+                'students': 'student'
+            }
+        };
+        writeToFile(fileName, js2xmlparser('students', newObjForXML, options));
+    } catch (e) {
+        throw e;
+    }
 }
 
 /**
@@ -197,12 +242,23 @@ function generateXML(fileName, newObjForXML) {
 fs.readFile('source.json', function (err, jsonBufferedObject) {
     'use strict';
     var sortedObject, sortedtext, newObjForXML;
-    if (err) {
-        throw 'Specified file either not found or cannot be opened' + err;
+    try {
+        if (err) {
+            throw err;
+        }
+        JSON.parse(jsonBufferedObject);
+        sortedObject = sortObject('score', jsonBufferedObject.toString(), 'asc');
+        if (sortObject !== null || sortObject !== undefined) {
+            sortedtext = generateTabularDataFromObject(sortedObject);
+            if (sortedtext !== null || sortedtext !== undefined) {
+                writeToFile('destination.txt', sortedtext);
+            }
+        }
+        newObjForXML = generateObjForXMLGeneration(sortedObject);
+        if (newObjForXML !== null || newObjForXML !== undefined) {
+            generateXML('destination.xml', newObjForXML);
+        }
+    } catch (e) {
+        console.log(e);
     }
-    sortedObject = sortObject('score', jsonBufferedObject.toString(), 'asc');
-    sortedtext = generateTabularDataFromObject(sortedObject);
-    writeToFile('destination.txt', sortedtext);
-    newObjForXML = generateObjForXMLGeneration(sortedObject);
-    generateXML('destination.xml', newObjForXML);
 });
