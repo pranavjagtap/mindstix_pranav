@@ -18,9 +18,13 @@
  * Note the sequence of records in the generated XML should be in thedescending order of the score.
  * Make sure you use a DOM generation library and do not construct the output XML by simple string concatenations. 
  * The intent here is to learn to use a DOM generation library.
+ * 
+ * This program takes 3 commandline arguments as below,
+ * node lab1.js source.json detination.txt destination.xml
  */
 
 var fs = require('fs');
+var jsonlint = require('jsonlint');
 var js2xmlparser = require('js2xmlparser');
 
 /**
@@ -31,9 +35,14 @@ function generateTabularDataFromObject(sortedObject) {
     var keys = '', tabularData = '', temp = '', i = 0, cnt = 0, innerObj = {}, prop = '';
     try {
         keys = Object.keys(sortedObject);
+        //iterate through the json file.
         for (i = 0, cnt = 0; i < sortedObject[keys].length; i = i + 1) {
             innerObj = sortedObject[keys][i];
             if (cnt === 0) {
+                /*
+                    iterate through one object in json file to get column names for text file, 
+                    add the contents to tabularData variable.
+                */
                 for (prop in innerObj) {
                     if (innerObj.hasOwnProperty(prop)) {
                         if (prop === 'id') {
@@ -53,6 +62,7 @@ function generateTabularDataFromObject(sortedObject) {
                 temp = '';
                 cnt = cnt + 1;
             }
+            //iterate through all values i njson file and attach it to the tabularData variable.
             for (prop in innerObj) {
                 if (innerObj.hasOwnProperty(prop)) {
                     if (Object.keys(innerObj).length === 4) {
@@ -74,7 +84,6 @@ function generateTabularDataFromObject(sortedObject) {
     } catch (e) {
         throw e;
     }
-
     return tabularData;
 }
 
@@ -84,11 +93,21 @@ function generateTabularDataFromObject(sortedObject) {
 function writeToFile(fileName, text) {
     'use strict';
     try {
-        fs.writeFile(fileName, text.toString(), function (err) {
-            if (err) {
-                console.log(err);
+        //Check if file already exists on same location (fileName is with location).
+        fs.stat(fileName, function (err) {
+            if (err === null) {
+                console.log(fileName + " file exists!!");
+            } else if (err.code === 'ENOENT') {
+                //if file is not present then write the file to disk.
+                fs.writeFile(fileName, text.toString(), function (err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('The file was saved successfully with name ' + fileName + '!');
+                    }
+                });
             } else {
-                console.log('The file was saved successfully with name ' + fileName + '!');
+                console.log("some other erorr");
             }
         });
     } catch (e) {
@@ -102,31 +121,19 @@ function writeToFile(fileName, text) {
  */
 function orderArray(jsonArray, colName, order) {
     'use strict';
-    var testData = [], sortedArray = [], i = 0, j = 0;
+    var sortedArray = [];
 
     try {
-        //create array of column data to be sorted.
-        for (i = 0; i < jsonArray.length; i = i + 1) {
-            testData.push(jsonArray[i][colName]);
-        }
-        //Sort the testData column.
-        testData = testData.sort(function (a, b) {
+        //Sort the jsonArray as per the order (asc/desc).
+        sortedArray = jsonArray.sort(function (a, b) {
             if (order === 'asc') {
-                return b - a;
+                return b[colName] - a[colName];
             }
             if (order === 'desc') {
-                return a - b;
+                return a[colName] - b[colName];
             }
-            return a - b;
+            return a[colName] - b[colName];
         });
-        //generate sorted array of objects as per the testData order
-        for (i = 0; i < jsonArray.length; i = i + 1) {
-            for (j = 0; j < jsonArray.length; j = j + 1) {
-                if (jsonArray[j][colName] === testData[i]) {
-                    sortedArray.push(jsonArray[j]);
-                }
-            }
-        }
     } catch (e) {
         throw e;
     }
@@ -187,7 +194,7 @@ function generateObjForXMLGeneration(sortedObject) {
     try {
         newObj = sortedObject;
         keys = Object.keys(newObj);
-
+        //Restructure the sortedObject, which will be provided as input to js2xmlparser() function.
         for (i = 0; i < newObj[keys].length; i = i + 1) {
             for (prop in newObj[keys][i]) {
                 if (newObj[keys][i].hasOwnProperty(prop)) {
@@ -205,8 +212,6 @@ function generateObjForXMLGeneration(sortedObject) {
                         propValue = newObj[keys][i][prop];
                         delete newObj[keys][i][prop];
                         newObj[keys][i].score = propValue;
-                    } else {
-                        throw "[Error: " + prop + " is an unexpected key name in json object.]";
                     }
                 }
             }
@@ -237,28 +242,45 @@ function generateXML(fileName, newObjForXML) {
 
 /**
  * Main Entry Point of the Assignment. 
- * Take JSON file - (first parameter) as input and generate destination.txt and destination.xml file .
  */
-fs.readFile('source.json', function (err, jsonBufferedObject) {
+function main() {
     'use strict';
-    var sortedObject, sortedtext, newObjForXML;
     try {
-        if (err) {
-            throw err;
-        }
-        JSON.parse(jsonBufferedObject);
-        sortedObject = sortObject('score', jsonBufferedObject.toString(), 'asc');
-        if (sortObject !== null || sortObject !== undefined) {
-            sortedtext = generateTabularDataFromObject(sortedObject);
-            if (sortedtext !== null || sortedtext !== undefined) {
-                writeToFile('destination.txt', sortedtext);
+        var sortedObject, sortedtext, newObjForXML, fileName = process.argv[2], destination1 = process.argv[3], destination2 = process.argv[4];
+        fs.readFile(fileName, function (err, jsonBufferedObject) {
+            try {
+                if (err) {
+                    throw err;
+                }
+                try {
+                    //JSON.parse(jsonBufferedObject.toString());
+                    jsonlint.parse(jsonBufferedObject.toString());
+                } catch (e) {
+                    throw "[Error: '" + fileName + "' file has syntax error. Please re-check the '" + fileName + "' file.] \n" + e;
+                }
+                sortedObject = sortObject('score', jsonBufferedObject.toString(), 'asc');
+                if (sortedObject !== null || sortedObject !== undefined) {
+                    sortedtext = generateTabularDataFromObject(sortedObject);
+                    if (sortedtext !== null || sortedtext !== undefined) {
+                        //destination.txt filename accepted from console as fourth argument
+                        writeToFile(destination1, sortedtext);
+                    }
+                }
+                newObjForXML = generateObjForXMLGeneration(sortedObject);
+                if (newObjForXML !== null || newObjForXML !== undefined) {
+                    //destination.xml filename accepted from console as fifth argument
+                    generateXML(destination2, newObjForXML);
+                }
+            } catch (e) {
+                console.log(e);
             }
-        }
-        newObjForXML = generateObjForXMLGeneration(sortedObject);
-        if (newObjForXML !== null || newObjForXML !== undefined) {
-            generateXML('destination.xml', newObjForXML);
-        }
+        });
     } catch (e) {
-        console.log(e);
+        throw "[Error: Enter valid arguments - \n node lab1.js source.json destination.txt destination.xml]";
     }
-});
+}
+
+/*
+ *Call to the main function. 
+ */
+main();
