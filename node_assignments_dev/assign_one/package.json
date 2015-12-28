@@ -1,0 +1,15 @@
+{
+  "name": "assign_one",
+  "version": "1.0.0",
+  "description": "assignment one from ninja portal",
+  "main": "asign_one.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pranav",
+  "license": "ISC",
+  "devDependencies": {
+    "js2xmlparser": "^1.0.0",
+    "jsonlint": "^1.6.2"
+  }
+}
